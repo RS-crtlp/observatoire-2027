@@ -1,0 +1,377 @@
+<title>Observatoire 2027</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : bandeau "affiche électorale" puis colonnes de veille, nav collante par rubrique */
+:root{
+  --bg:#f3f4f7; --surface:#ffffff; --ink:#141a2e; --muted:#5b6378; --line:#d9dce5;
+  --accent:#c8102e; --blue:#1f3a8a; --soft:#e8ebf3;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1220; --surface:#161b2d; --ink:#e9ecf5; --muted:#9aa2b8; --line:#2a3148;
+  --accent:#ff4d63; --blue:#8aa6ff; --soft:#1e2540; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1220; --surface:#161b2d; --ink:#e9ecf5; --muted:#9aa2b8; --line:#2a3148;
+  --accent:#ff4d63; --blue:#8aa6ff; --soft:#1e2540; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--blue)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.hero{background:var(--ink);color:var(--bg);padding-block:36px 28px}
+.hero .kicker{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.hero h1{font:900 clamp(40px,8vw,88px)/.9 var(--display);font-stretch:75%;letter-spacing:-.01em;margin:12px 0 14px;text-wrap:balance}
+.hero h1 span{color:var(--accent)}
+.hero p{max-width:62ch;margin:0;opacity:.85}
+.countdown{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:22px;font:500 13px var(--mono)}
+.countdown b{font:800 30px/1 var(--display);font-stretch:80%;display:block}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px}
+nav.tabs a{flex:none;text-decoration:none;color:var(--ink);font:600 13px var(--body);padding:7px 12px;border-radius:999px}
+nav.tabs a:hover{background:var(--soft)}
+
+main{padding-block:28px 60px;display:grid;gap:44px}
+section>h2{font:800 30px/1.05 var(--display);font-stretch:80%;margin:0 0 4px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 18px;max-width:75ch}
+.label{font:500 11px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px;min-width:0}
+.panel h3{font:700 17px/1.2 var(--display);font-stretch:90%;margin:0 0 12px}
+.src{font:400 11.5px/1.4 var(--mono);color:var(--muted);margin-top:12px}
+.num{font-variant-numeric:tabular-nums}
+
+/* barres horizontales */
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center;font-size:13.5px}
+.bar .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .name small{color:var(--muted);font-size:11px;margin-left:4px}
+.bar .track{height:14px;background:var(--soft);border-radius:2px;position:relative}
+.bar .fill{height:100%;border-radius:2px}
+.bar .val{font:500 13px var(--mono);text-align:right}
+.delta{font:500 11px var(--mono)}
+.up{color:#1c8a4a}.down{color:var(--accent)}
+@media (max-width:520px){.bar{grid-template-columns:110px 1fr 46px}}
+
+/* tableau */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+th{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td{font-variant-numeric:tabular-nums}
+td.lead{font-weight:600}
+
+/* duels */
+.duel{display:grid;gap:4px;margin-bottom:12px}
+.duel .row{display:flex;justify-content:space-between;font-size:13px}
+.duel .split{display:flex;height:22px;border-radius:3px;overflow:hidden;font:600 12px var(--mono);color:#fff}
+.duel .split div{display:flex;align-items:center;padding:0 8px}
+.duel .split div:last-child{justify-content:flex-end}
+
+/* chart svg */
+svg text{fill:var(--muted);font:11px var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-top:8px}
+.legend i{display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{border-top:3px solid var(--c,var(--ink));padding-top:8px}
+.stat b{display:block;font:800 26px/1.1 var(--display);font-stretch:85%}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+/* posts X */
+.feed{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.post{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.post .who{display:flex;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font:800 14px var(--display);flex:none}
+.post .who b{display:block;font-size:14px}
+.post .who span{font:400 12px var(--mono);color:var(--muted)}
+.post blockquote{margin:0;font-size:15px}
+.post .type{align-self:flex-start;font:500 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:3px;background:var(--soft);color:var(--muted)}
+.post .type.q{background:var(--accent);color:#fff}
+.post footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:400 12px var(--mono);color:var(--muted);margin-top:auto}
+.accounts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+.acc{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);text-decoration:none;color:var(--ink)}
+.acc:hover{border-color:var(--blue)}
+.acc small{display:block;color:var(--muted);font:400 12px var(--mono)}
+.note{border-left:3px solid var(--accent);background:var(--surface);padding:12px 16px;font-size:14px;border-radius:0 6px 6px 0}
+footer.page{border-top:1px solid var(--line);padding-block:24px;color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .6s ease}}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Présidentielle française · veille au 9 novembre 2026</div>
+    <h1>Observatoire <span>2027</span></h1>
+    <p>Intentions de vote, popularité en ligne, temps de parole à l'antenne et prises de position sur X des principaux acteurs de la campagne. Chaque chiffre renvoie à sa source.</p>
+    <div class="countdown" id="cd"></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Rubriques">
+  <div class="wrap">
+    <a href="#sondages">Intentions de vote</a>
+    <a href="#second-tour">Second tour</a>
+    <a href="#reseaux">Réseaux sociaux</a>
+    <a href="#temps-parole">Temps de parole</a>
+    <a href="#tweets">Fil X</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="sondages">
+  <h2>Intentions de vote au 1er tour</h2>
+  <p class="sub">Moyenne glissante sur 45 jours des enquêtes publiées (14 sondages du 29 septembre au 5 novembre 2026). Marge d'erreur type ± 2,8 points. Écart calculé par l'agrégateur sur sa période précédente.</p>
+  <div class="grid">
+    <div class="panel">
+      <h3>Moyenne des sondages</h3>
+      <div class="bars" id="avg"></div>
+      <div class="src">Source : <a href="https://votons-2027.fr/sondages" target="_blank" rel="noopener">Votons 2027</a>, agrégat Ipsos, Ifop, Harris, Elabe, OpinionWay, Cluster17, YouGov · màj 9 nov. 2026</div>
+    </div>
+    <div class="panel">
+      <h3>Dynamique des quatre premiers</h3>
+      <div id="trend"></div>
+      <div class="legend" id="trendLegend"></div>
+      <div class="src">Points : chaque sondage. Ligne : moyenne mobile sur 4 enquêtes. Source : instituts via Votons et <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2027_French_presidential_election" target="_blank" rel="noopener">Wikipédia</a>.</div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:18px">
+    <h3>Derniers sondages publiés</h3>
+    <div class="tbl"><table id="polls"></table></div>
+    <div class="src">« — » : candidat non testé dans l'hypothèse principale. Dates = fin de terrain.</div>
+  </div>
+</section>
+
+<section id="second-tour">
+  <h2>Hypothèses de second tour</h2>
+  <p class="sub">Duels testés face à Marine Le Pen. Second tour prévu le 2 mai 2027.</p>
+  <div class="grid">
+    <div class="panel">
+      <h3>Harris Interactive · 3-5 nov. 2026</h3>
+      <div id="duels"></div>
+      <div class="src">Source : <a href="https://infodujour.fr/politique/elections/presidentielles/87930-presidentielle-le-pen-ecrase-ses-rivaux-melenchon-creuse-lecart" target="_blank" rel="noopener">Infodujour</a>, baromètre Toluna Harris Interactive pour M6/RTL</div>
+    </div>
+    <div class="panel">
+      <h3>Lecture</h3>
+      <p style="margin:0 0 10px">Marine Le Pen l'emporte dans tous les duels testés. L'écart le plus serré concerne Édouard Philippe (16 points), le plus large Jean-Luc Mélenchon (36 points).</p>
+      <p style="margin:0" class="sub">À six mois du scrutin, les intentions de vote restent fragiles : les candidatures ne sont pas toutes déclarées et l'hypothèse Bardella reste testée par certains instituts. Teddy Riner a annoncé sa candidature le 9 novembre ; il n'est pas encore intégré aux moyennes.</p>
+      <div class="src">Sources : <a href="https://www.politiquematin.fr/presidentielle-2027-sondages-novembre-incertitudes-081126" target="_blank" rel="noopener">Politique Matin</a> · <a href="https://france24.com/fr/france/20261109-le-champion-olympique-de-judo-teddy-riner-annonce-sa-candidature-%C3%A0-l-%C3%A9lection-pr%C3%A9sidentielle" target="_blank" rel="noopener">France 24</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="reseaux">
+  <h2>Popularité sur les réseaux sociaux</h2>
+  <p class="sub">Engagement (j'aime, commentaires, partages) sur les comptes officiels des candidats, sur 12 mois (9 nov. 2025 – 8 nov. 2026), et popularité mesurée par sondage.</p>
+  <div class="stats panel" style="margin-bottom:18px">
+    <div class="stat" style="--c:#c8402e"><span class="label">1er en engagement</span><b class="num">19,6 %</b><span>Mélenchon · 49,5 M interactions</span></div>
+    <div class="stat" style="--c:#0f2d6b"><span class="label">2e</span><b class="num">16,3 %</b><span>Bardella</span></div>
+    <div class="stat" style="--c:#263a7a"><span class="label">3e</span><b class="num">14,9 %</b><span>Le Pen · 37,5 M interactions</span></div>
+    <div class="stat" style="--c:#8a6fd1"><span class="label">Plus forte croissance</span><b class="num">+21,2 %</b><span>Lisnard, abonnés depuis juin</span></div>
+  </div>
+  <div class="grid">
+    <div class="panel">
+      <h3>Abonnés par réseau</h3>
+      <div class="tbl"><table id="followers"></table></div>
+      <div class="src">Relevé du 9 nov. 2026. Évolution X et TikTok depuis le 15 juin 2026. Source : <a href="https://www.saper-vedere.eu/presidentielle/p/presidentielle-candidats/rapport/" target="_blank" rel="noopener">Saper Vedere</a></div>
+    </div>
+    <div class="panel">
+      <h3>Croissance des abonnés (X + Instagram + TikTok)</h3>
+      <div class="bars" id="growth"></div>
+      <div class="src">Du 15 juin au 9 nov. 2026. Source : Saper Vedere</div>
+    </div>
+    <div class="panel">
+      <h3>Citations par les journalistes et médias</h3>
+      <div class="bars" id="cites"></div>
+      <div class="src">Nombre de posts citant le candidat, 12 mois. Sur 30 jours, Mélenchon (2 367) passe devant Le Pen (2 325). Source : Saper Vedere</div>
+    </div>
+    <div class="panel">
+      <h3>Cote de popularité · novembre 2026</h3>
+      <div class="bars" id="pop"></div>
+      <div class="src">Part d'opinions positives. Source : <a href="https://cluster17.com/barometre-des-personnalites-le-point-cluster17-novembre-2026-record-dimpopularite-pour-emmanuel-macron-david-lisnard-dans-le-top-5/" target="_blank" rel="noopener">Baromètre Le Point / Cluster17</a></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:18px">
+    <h3>Part de l'engagement par bloc politique</h3>
+    <div id="blocs"></div>
+    <div class="src">12 mois, 35 candidats. Source : Saper Vedere</div>
+  </div>
+</section>
+
+<section id="temps-parole">
+  <h2>Temps de parole à l'antenne</h2>
+  <p class="sub">L'Arcom publie un bilan trimestriel à partir des relevés mensuels des chaînes. Le bilan juillet-septembre 2026 n'est pas encore publié ; voici les relevés connus sur l'exposition de nuit, au cœur du débat.</p>
+  <div class="note" style="margin-bottom:18px"><b>Nouvelle règle depuis le 1er octobre 2026 :</b> les interventions diffusées entre minuit et 5h59 ne comptent plus dans le temps de parole. Décision du collège de l'Arcom du 30 juin 2026, prise après la mise en demeure de Radio France (10 juin) et celles visant CNews.</div>
+  <div class="grid">
+    <div class="panel">
+      <h3>Part du temps de parole diffusée la nuit</h3>
+      <div class="bars" id="night"></div>
+      <div class="src">Radio : temps de parole RN, 1er janv. – 31 mars 2026, <a href="https://www.arcom.fr/presse/temps-de-parole-politique-mise-en-demeure-de-radio-france" target="_blank" rel="noopener">Arcom</a>. CNews : bandeaux citant des personnalités LFI (23h-7h), septembre 2026, <a href="https://rsf.org/fr/france-sur-cnews-lfi-jusqu-au-bout-de-la-nuit" target="_blank" rel="noopener">RSF</a> (mesure d'écran, pas un relevé Arcom).</div>
+    </div>
+    <div class="panel">
+      <h3>Poids du RN en journée (6h – minuit)</h3>
+      <div class="bars" id="day"></div>
+      <p style="margin:12px 0 0;font-size:14px">Une fois la nuit retirée, le RN tombe sous 10 % des interventions politiques sur les deux antennes de Radio France, alors qu'il pèse plus du tiers des intentions de vote.</p>
+      <div class="src">1er trimestre 2026. Source : <a href="https://stephanelarue.com/temps-de-parole-larcom-ne-comptera-plus-la-nuit-a-partir-du-1er-octobre/" target="_blank" rel="noopener">Stéphane Larue</a>, d'après l'Arcom</div>
+    </div>
+    <div class="panel">
+      <h3>Prochaines publications</h3>
+      <div class="tbl"><table>
+        <tr><th>Période</th><th>Contenu</th></tr>
+        <tr><td>Juil. – sept. 2026</td><td style="text-align:left">Bilan trimestriel, toutes chaînes</td></tr>
+        <tr><td>Oct. – déc. 2026</td><td style="text-align:left">1er bilan sans la nuit</td></tr>
+        <tr><td>Campagne 2027</td><td style="text-align:left">Relevés par candidat (équité puis égalité)</td></tr>
+      </table></div>
+      <div class="src">Données officielles : <a href="https://www.arcom.fr/temps-parole" target="_blank" rel="noopener">arcom.fr/temps-parole</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="tweets">
+  <h2>Ce qu'ils publient sur X</h2>
+  <p class="sub">Prises de position marquantes des derniers jours, telles que rapportées par l'AFP et la presse. Les citations entre guillemets sont exactes ; les autres messages sont résumés. Cliquez pour lire les comptes originaux.</p>
+  <div class="feed" id="feed"></div>
+  <h3 style="font:700 17px var(--display);margin:28px 0 12px">Comptes à suivre</h3>
+  <div class="accounts" id="accounts"></div>
+  <div class="src">Abonnés X relevés le 9 nov. 2026 (Saper Vedere) pour Le Pen et Mélenchon ; non relevés pour les autres.</div>
+</section>
+
+</main>
+
+<footer class="page">
+  <div class="wrap">Page de veille compilée le 9 novembre 2026 à partir de sources publiques. Les sondages sont des photographies de l'opinion, pas des prévisions. Premier tour : 18 avril 2027 · second tour : 2 mai 2027.</div>
+</footer>
+
+<script>
+const C={LP:"#263a7a",JLM:"#c8402e",EP:"#1f9bb5",RG:"#d9537f",DL:"#8a6fd1",BR:"#4a78c8",GA:"#e0a12b",BC:"#b8708a",EZ:"#6b5644",MT:"#3f9a4b",DV:"#7f8c99",FR:"#a01a1a",NDA:"#5d6a8a",NA:"#e0602a",FRu:"#d87850",JB:"#0f2d6b"};
+const fmt=(n,d=1)=>n.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
+
+// Compte à rebours
+(function(){
+  const now=new Date(), t1=new Date("2027-04-18"), t2=new Date("2027-05-02");
+  const d=x=>Math.max(0,Math.ceil((x-now)/864e5));
+  document.getElementById("cd").innerHTML=`<div><b>${d(t1)}</b>jours avant le 1er tour</div><div><b>${d(t2)}</b>jours avant le 2nd tour</div><div><b>14</b>sondages en 45 jours</div>`;
+})();
+
+function bars(id,rows,{max,unit="%",dec=1}={}){
+  const m=max||Math.max(...rows.map(r=>r.v));
+  document.getElementById(id).innerHTML=rows.map(r=>`
+    <div class="bar"><div class="name" title="${r.n}">${r.n}${r.p?`<small>${r.p}</small>`:""}</div>
+    <div class="track"><div class="fill" style="width:${r.v/m*100}%;background:${r.c||"var(--blue)"}"></div></div>
+    <div class="val num">${unit==="%"?fmt(r.v,dec)+" %":r.v.toLocaleString("fr-FR")}${r.d!=null?`<div class="delta ${r.d>0?"up":r.d<0?"down":""}">${r.d>0?"+":""}${fmt(r.d)}</div>`:""}</div></div>`).join("");
+}
+
+bars("avg",[
+ {n:"Marine Le Pen",p:"RN",v:34.0,d:-2.2,c:C.LP},{n:"Jean-Luc Mélenchon",p:"LFI",v:17.3,d:.2,c:C.JLM},
+ {n:"Édouard Philippe",p:"Horizons",v:13.3,d:-3.4,c:C.EP},{n:"Raphaël Glucksmann",p:"PP",v:12.0,d:3.0,c:C.RG},
+ {n:"David Lisnard",p:"NE",v:7.2,d:.5,c:C.DL},{n:"Bruno Retailleau",p:"LR",v:6.1,d:-1.7,c:C.BR},
+ {n:"Gabriel Attal",p:"RE",v:5.7,d:-6.1,c:C.GA},{n:"Bernard Cazeneuve",p:"LC",v:5.0,c:C.BC},
+ {n:"Éric Zemmour",p:"REC",v:3.9,d:-.9,c:C.EZ},{n:"Marine Tondelier",p:"LE",v:2.7,d:-1.2,c:C.MT},
+ {n:"Dominique de Villepin",p:"LFH",v:2.5,c:C.DV},{n:"Fabien Roussel",p:"PCF",v:1.9,d:-.5,c:C.FR},
+ {n:"Nicolas Dupont-Aignan",p:"DLF",v:1.8,d:-.2,c:C.NDA},{n:"Nathalie Arthaud",p:"LO",v:.7,c:C.NA},
+ {n:"François Ruffin",p:"Debout !",v:.3,d:-.2,c:C.FRu}],{max:40});
+
+// Sondages
+const P=[
+ ["2026-11-05","Harris Interactive",2101,34,19,12,11],["2026-10-29","Ifop",1501,35,18,9.5,10],
+ ["2026-10-22","Cluster17",3000,33,18.5,16,13],["2026-10-22","Ipsos",1500,33.5,17,13,13],
+ ["2026-10-22","OpinionWay",973,36,16,12,13],["2026-10-21","Harris Interactive",2094,33,17,15,12],
+ ["2026-10-19","Ifop",1928,36,16.5,12,13.5],["2026-10-16","Elabe",1701,32.5,15,16.5,15.5],
+ ["2026-10-15","Cluster17",1263,31,18,17,11],["2026-10-15","YouGov",1094,36,15,10,12],
+ ["2026-10-14","Ifop",1525,32,16,13,11.5],["2026-10-14","OpinionWay",1043,35,14,12,13],
+ ["2026-10-08","Harris Interactive",2004,37,19,null,7],["2026-09-29","Ifop",1597,32,15,16,11]];
+const cell=v=>v==null?"—":fmt(v,v%1?1:0);
+document.getElementById("polls").innerHTML=`<tr><th>Date</th><th>Institut</th><th>Échant.</th><th>Le Pen</th><th>Mélenchon</th><th>Philippe</th><th>Glucksmann</th></tr>`+
+ P.map(r=>`<tr><td>${new Date(r[0]).toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}</td><td>${r[1]}</td><td>${r[2].toLocaleString("fr-FR")}</td><td class="lead">${cell(r[3])}</td><td>${cell(r[4])}</td><td>${cell(r[5])}</td><td>${cell(r[6])}</td></tr>`).join("");
+
+// Graphique de tendance
+(function(){
+  const S=[["Le Pen",3,C.LP],["Mélenchon",4,C.JLM],["Philippe",5,C.EP],["Glucksmann",6,C.RG]];
+  const W=560,H=260,m={l:34,r:14,t:12,b:26};
+  const d0=+new Date("2026-09-26"),d1=+new Date("2026-11-08");
+  const x=d=>m.l+(new Date(d)-d0)/(d1-d0)*(W-m.l-m.r), y=v=>m.t+(1-v/40)*(H-m.t-m.b);
+  const sorted=[...P].sort((a,b)=>a[0]<b[0]?-1:1);
+  let g="";
+  [0,10,20,30,40].forEach(v=>g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end">${v}</text>`);
+  ["2026-10-01","2026-10-15","2026-11-01"].forEach(d=>g+=`<text x="${x(d)}" y="${H-6}" text-anchor="middle">${new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short"})}</text>`);
+  S.forEach(([n,i,c])=>{
+    const pts=sorted.filter(r=>r[i]!=null);
+    pts.forEach(r=>g+=`<circle cx="${x(r[0])}" cy="${y(r[i])}" r="3" fill="${c}" fill-opacity=".35"/>`);
+    const ma=pts.map((r,k)=>{const w=pts.slice(Math.max(0,k-3),k+1);return [r[0],w.reduce((s,q)=>s+q[i],0)/w.length]});
+    g+=`<path d="${ma.map((p,k)=>(k?"L":"M")+x(p[0]).toFixed(1)+" "+y(p[1]).toFixed(1)).join(" ")}" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`;
+    const last=ma[ma.length-1]; g+=`<circle cx="${x(last[0])}" cy="${y(last[1])}" r="4.5" fill="${c}" stroke="var(--surface)" stroke-width="2"/>`;
+  });
+  document.getElementById("trend").innerHTML=`<div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Évolution des intentions de vote des quatre premiers candidats">${g}</svg></div>`;
+  document.getElementById("trendLegend").innerHTML=S.map(([n,,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join("");
+})();
+
+// Duels
+document.getElementById("duels").innerHTML=[["Édouard Philippe",42,C.EP],["Raphaël Glucksmann",40,C.RG],["Jean-Luc Mélenchon",32,C.JLM]].map(([n,v,c])=>`
+ <div class="duel"><div class="row"><span>${n}</span><span>Marine Le Pen</span></div>
+ <div class="split"><div style="width:${v}%;background:${c}">${v} %</div><div style="width:${100-v}%;background:${C.LP}">${100-v} %</div></div></div>`).join("");
+
+// Réseaux
+document.getElementById("followers").innerHTML=`<tr><th>Réseau</th><th></th><th>Le Pen</th><th>Mélenchon</th></tr>`+
+ [["X","",3049955,"+1,3 %",2732871,"+1,9 %"],["TikTok","",1667356,"+8,3 %",3272331,"+14,1 %"],["Instagram","",917521,"+17,1 %",1237961,"n.c."],["YouTube","",226000,"+5,1 %",1320000,"+3,1 %"]]
+ .map(r=>`<tr><td>${r[0]}</td><td></td><td>${r[2].toLocaleString("fr-FR")} <span class="delta up">${r[3]}</span></td><td>${r[4].toLocaleString("fr-FR")} <span class="delta ${r[5]==="n.c."?"":"up"}">${r[5]}</span></td></tr>`).join("")+
+ `<tr><td class="lead">Total</td><td></td><td class="lead">5 860 832</td><td class="lead">8 600 118</td></tr>`;
+bars("growth",[
+ {n:"David Lisnard",v:21.2,c:C.DL},{n:"Nathalie Arthaud",v:18.8,c:C.NA},{n:"Jean-Luc Mélenchon",v:8.2,c:C.JLM},
+ {n:"Fabien Roussel",v:7.1,c:C.FR},{n:"Bruno Retailleau",v:6.2,c:C.BR},{n:"Marine Le Pen",v:5.6,c:C.LP},
+ {n:"Marine Tondelier",v:5.1,c:C.MT},{n:"Éric Zemmour",v:4.0,c:C.EZ},{n:"Jordan Bardella",v:2.5,c:C.JB},
+ {n:"Édouard Philippe",v:1.1,c:C.EP},{n:"Gabriel Attal",v:-.4,c:C.GA},{n:"François Ruffin",v:-.8,c:C.FRu}].map(r=>({...r,v:Math.max(r.v,0),raw:r.v})),{max:22});
+// afficher les valeurs négatives réelles
+document.querySelectorAll("#growth .bar").forEach((b,i)=>{const raw=[21.2,18.8,8.2,7.1,6.2,5.6,5.1,4.0,2.5,1.1,-.4,-.8][i];b.querySelector(".val").textContent=(raw>0?"+":"")+fmt(raw)+" %";if(raw<0)b.querySelector(".val").classList.add("down")});
+bars("cites",[
+ {n:"Marine Le Pen",v:14405,c:C.LP},{n:"Jean-Luc Mélenchon",v:12275,c:C.JLM},{n:"Jordan Bardella",v:10667,c:C.JB},
+ {n:"Gabriel Attal",v:5796,c:C.GA},{n:"Édouard Philippe",v:5784,c:C.EP},{n:"Raphaël Glucksmann",v:5484,c:C.RG},
+ {n:"Bruno Retailleau",v:5381,c:C.BR},{n:"Gérald Darmanin",v:4341,c:"#7a8fb0"}],{unit:"n"});
+bars("pop",[{n:"Marine Le Pen",v:35,d:1,c:C.LP},{n:"Jordan Bardella",v:32,d:2,c:C.JB},{n:"Jean-Luc Mélenchon",v:26,c:C.JLM},
+ {n:"Raphaël Glucksmann",v:22,c:C.RG},{n:"François Ruffin",v:22,c:C.FRu}],{max:40,dec:0});
+(function(){
+  const B=[["Extrême droite",46.8,"#263a7a"],["Gauche radicale",24.8,"#c8402e"],["Gauche",8.4,"#d9537f"],["Droite souverainiste",6.0,"#5d6a8a"],["Droite",5.5,"#4a78c8"],["Centre",5.3,"#e0a12b"],["Autres",3.1,"#9aa2b8"]];
+  document.getElementById("blocs").innerHTML=`<div style="display:flex;height:28px;border-radius:3px;overflow:hidden">${B.map(b=>`<div title="${b[0]} ${fmt(b[1])} %" style="width:${b[1]}%;background:${b[2]}"></div>`).join("")}</div>
+  <div class="legend">${B.map(b=>`<span><i style="background:${b[2]};height:10px;width:10px"></i>${b[0]} <b class="num">${fmt(b[1])} %</b></span>`).join("")}</div>`;
+})();
+
+// Temps de parole
+bars("night",[{n:"franceinfo · RN",v:70,c:C.LP},{n:"France Inter · RN",v:60,c:C.LP},{n:"CNews · LFI (bandeaux)",v:80,c:C.JLM}].sort((a,b)=>b.v-a.v),{max:100,dec:0});
+document.querySelectorAll("#night .val").forEach(v=>{if(v.textContent.startsWith("70"))v.textContent="> 70 %";else if(v.textContent.startsWith("60")||v.textContent.startsWith("80"))v.textContent="≈ "+v.textContent});
+bars("day",[{n:"franceinfo",v:9.5,c:C.LP},{n:"France Inter",v:9,c:C.LP},{n:"Intentions de vote RN",v:34,c:"var(--muted)"}],{max:40});
+
+// Fil X
+const F=[
+ {i:"JLM",n:"Jean-Luc Mélenchon",h:"@JLMelenchon",c:C.JLM,d:"7 nov. 2026",q:true,
+  t:"« Pour une autoproclamée “patriote”, elle commence par dire son opposition à une tradition française depuis le XVIe siècle : le droit du sol. »",
+  ctx:"Réponse à Marine Le Pen",s:"https://fr.qz.com/marine-pen-programme-lfi-demantelement-melenchon-philippe-110726"},
+ {i:"MLP",n:"Marine Le Pen",h:"@MLP_officiel",c:C.LP,d:"7 nov. 2026",
+  t:"Critique le programme présidentiel actualisé de LFI, qu'elle qualifie de projet de déstabilisation du pays, et y voit une continuité avec l'action d'Emmanuel Macron.",
+  ctx:"Programme LFI 2027",s:"https://lematin.ch/story/france-marine-le-pen-insurgee-devant-le-programme-de-melenchon-103663596"},
+ {i:"TR",n:"Teddy Riner",h:"@teddyriner",c:"#2c8c6e",d:"9 nov. 2026",
+  t:"Annonce sa candidature à la présidentielle dans une vidéo publiée sur ses réseaux sociaux, en se présentant comme « ni de droite ni de gauche ».",
+  ctx:"Déclaration de candidature",s:"https://france24.com/fr/france/20261109-le-champion-olympique-de-judo-teddy-riner-annonce-sa-candidature-%C3%A0-l-%C3%A9lection-pr%C3%A9sidentielle"},
+ {i:"BV",n:"Boris Vallaud",h:"@BorisVallaud",c:C.RG,d:"fin oct. 2026",
+  t:"Tourne en dérision sur X la proposition de Gabriel Attal d'une « grande primaire des démocrates », également accueillie froidement chez Édouard Philippe et Bruno Retailleau.",
+  ctx:"Primaire du bloc central",s:"https://lcp.fr/actualites/grande-primaire-des-democrates-chez-philippe-et-retailleau-la-proposition-d-attal"}];
+document.getElementById("feed").innerHTML=F.map(p=>`<article class="post">
+ <div class="who"><div class="avatar" style="background:${p.c}">${p.i}</div><div><b>${p.n}</b><span>${p.h}</span></div></div>
+ <span class="type ${p.q?"q":""}">${p.q?"Citation exacte":"Résumé"} · ${p.ctx}</span>
+ <blockquote>${p.t}</blockquote>
+ <footer><span>${p.d}</span><span><a href="https://x.com/${p.h.slice(1)}" target="_blank" rel="noopener">Profil X</a> · <a href="${p.s}" target="_blank" rel="noopener">Source</a></span></footer></article>`).join("");
+
+const A=[["MLP","Marine Le Pen","MLP_officiel",C.LP,"3 049 955 abonnés"],["JLM","Jean-Luc Mélenchon","JLMelenchon",C.JLM,"2 732 871 abonnés"],
+ ["JB","Jordan Bardella","J_Bardella",C.JB,"Président du RN"],["EP","Édouard Philippe","EPhilippe_LH",C.EP,"Horizons"],
+ ["RG","Raphaël Glucksmann","rglucks1",C.RG,"Place publique"],["DL","David Lisnard","davidlisnard",C.DL,"Nouvelle Énergie"],
+ ["BR","Bruno Retailleau","BrunoRetailleau",C.BR,"Les Républicains"],["GA","Gabriel Attal","GabrielAttal",C.GA,"Renaissance"],
+ ["EZ","Éric Zemmour","ZemmourEric",C.EZ,"Reconquête"],["MT","Marine Tondelier","marinetondelier",C.MT,"Les Écologistes"]];
+document.getElementById("accounts").innerHTML=A.map(a=>`<a class="acc" href="https://x.com/${a[2]}" target="_blank" rel="noopener"><div class="avatar" style="background:${a[3]}">${a[0]}</div><div><b>${a[1]}</b><small>@${a[2]} · ${a[4]}</small></div></a>`).join("");
+</script>
