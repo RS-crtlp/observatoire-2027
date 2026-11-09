@@ -38,7 +38,8 @@ nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px}
 nav.tabs a{flex:none;text-decoration:none;color:var(--ink);font:600 13px var(--body);padding:7px 12px;border-radius:999px}
 nav.tabs a:hover{background:var(--soft)}
 
-main{padding-block:28px 60px;display:grid;gap:44px}
+main{padding-block:28px 60px;display:grid;gap:44px;grid-template-columns:minmax(0,1fr)}
+main>section{min-width:0}
 section>h2{font:800 30px/1.05 var(--display);font-stretch:80%;margin:0 0 4px;text-wrap:balance}
 .sub{color:var(--muted);margin:0 0 18px;max-width:75ch}
 .label{font:500 11px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -103,6 +104,9 @@ svg text{fill:var(--muted);font:11px var(--mono)}
 .acc:hover{border-color:var(--blue)}
 .acc small{display:block;color:var(--muted);font:400 12px var(--mono)}
 .note{border-left:3px solid var(--accent);background:var(--surface);padding:12px 16px;font-size:14px;border-radius:0 6px 6px 0}
+.yb{font:500 13px var(--mono);padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer}
+.yb:hover{border-color:var(--blue)}
+.yb[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 footer.page{border-top:1px solid var(--line);padding-block:24px;color:var(--muted);font-size:13px}
 @media (prefers-reduced-motion:no-preference){.fill{transition:width .6s ease}}
 </style>
@@ -120,6 +124,7 @@ footer.page{border-top:1px solid var(--line);padding-block:24px;color:var(--mute
   <div class="wrap">
     <a href="#sondages">Intentions de vote</a>
     <a href="#second-tour">Second tour</a>
+    <a href="#historique">Sondages d'hier</a>
     <a href="#reseaux">Réseaux sociaux</a>
     <a href="#temps-parole">Temps de parole</a>
     <a href="#tweets">Fil X</a>
@@ -167,6 +172,46 @@ footer.page{border-top:1px solid var(--line);padding-block:24px;color:var(--mute
       <div class="src">Sources : <a href="https://www.politiquematin.fr/presidentielle-2027-sondages-novembre-incertitudes-081126" target="_blank" rel="noopener">Politique Matin</a> · <a href="https://france24.com/fr/france/20261109-le-champion-olympique-de-judo-teddy-riner-annonce-sa-candidature-%C3%A0-l-%C3%A9lection-pr%C3%A9sidentielle" target="_blank" rel="noopener">France 24</a></div>
     </div>
   </div>
+</section>
+
+<section id="historique">
+  <h2>Sondages et résultats depuis 1981</h2>
+  <p class="sub">Pour chaque présidentielle, la moyenne des derniers sondages publiés par chaque institut avant le scrutin, comparée au résultat officiel (% des suffrages exprimés). Un écart positif signifie que le candidat a fait mieux que prévu.</p>
+  <div class="panel" style="margin-bottom:18px">
+    <h3>Bilan par élection · 1er tour</h3>
+    <div class="tbl"><table id="histSum"></table></div>
+    <div class="src">Erreur moyenne : moyenne des écarts absolus sur les 5 premiers candidats. Les deux premiers sont-ils bien identifiés ? Comparaison du duo de tête des sondages avec celui des urnes.</div>
+  </div>
+  <div class="grid">
+    <div class="panel">
+      <h3>Détail d'une élection</h3>
+      <div id="yearBtns" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
+      <div id="dumb"></div>
+      <div class="legend"><span><i style="background:var(--muted);height:10px;width:10px;border-radius:50%"></i>Sondages</span><span><i style="background:var(--ink);height:10px;width:10px;border-radius:50%"></i>Résultat</span></div>
+      <div class="src" id="dumbSrc"></div>
+    </div>
+    <div class="panel">
+      <h3>Le candidat FN/RN : sous-estimé ou surestimé ?</h3>
+      <div id="fnChart"></div>
+      <p style="margin:10px 0 0;font-size:14px">Écart entre le résultat et les derniers sondages pour Jean-Marie puis Marine Le Pen. Les instituts l'ont sous-estimé en 1988, 1995, 2002 et 2012, et surestimé en 2007. Depuis 2017, l'écart reste inférieur à un point.</p>
+      <div class="src">1981 : Jean-Marie Le Pen n'avait pas obtenu ses 500 parrainages.</div>
+    </div>
+    <div class="panel">
+      <h3>Second tour : prévu contre réel</h3>
+      <div class="tbl"><table id="t2"></table></div>
+      <div class="src">Score du vainqueur. Dernier sondage de chaque institut avant le second tour.</div>
+    </div>
+    <div class="panel">
+      <h3>Ce que l'histoire dit de 2027</h3>
+      <ul style="margin:0;padding-left:18px;display:grid;gap:8px;font-size:14px">
+        <li>Les sondages de la dernière semaine se trompent en moyenne de 1 à 3 points par candidat. Celles de novembre, à six mois du vote, sont bien plus incertaines.</li>
+        <li>Deux accidents majeurs : 1995 (Chirac donné premier, Jospin arrive en tête) et 2002 (Jospin donné qualifié, Le Pen le devance de 0,7 point).</li>
+        <li>Les dynamiques de fin de campagne échappent souvent aux sondages : Mitterrand en 1981, Le Pen en 2002, Mélenchon en 2022 (près de 5 points au-dessus de la moyenne des derniers sondages).</li>
+        <li>Au second tour, l'écart vient surtout du report des voix : Macron a été sous-estimé de 3 à 5 points en 2017 et 2022.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="src">Sources : Wikipédia, pages des élections <a href="https://fr.wikipedia.org/wiki/%C3%89lection_pr%C3%A9sidentielle_fran%C3%A7aise_de_1981" target="_blank" rel="noopener">1981</a>, <a href="https://fr.wikipedia.org/wiki/%C3%89lection_pr%C3%A9sidentielle_fran%C3%A7aise_de_1988" target="_blank" rel="noopener">1988</a>, <a href="https://fr.wikipedia.org/wiki/%C3%89lection_pr%C3%A9sidentielle_fran%C3%A7aise_de_1995" target="_blank" rel="noopener">1995</a> et listes de sondages <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2002_French_presidential_election" target="_blank" rel="noopener">2002</a>, <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2007_French_presidential_election" target="_blank" rel="noopener">2007</a>, <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2012_French_presidential_election" target="_blank" rel="noopener">2012</a>, <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2017_French_presidential_election" target="_blank" rel="noopener">2017</a>, <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2022_French_presidential_election" target="_blank" rel="noopener">2022</a>. Avant 2002, seuls les sondages Sofres (et Ipsos en 1995) sont détaillés : la comparaison repose sur un ou deux instituts.</div>
 </section>
 
 <section id="reseaux">
@@ -318,6 +363,64 @@ document.getElementById("polls").innerHTML=`<tr><th>Date</th><th>Institut</th><t
 document.getElementById("duels").innerHTML=[["Édouard Philippe",42,C.EP],["Raphaël Glucksmann",40,C.RG],["Jean-Luc Mélenchon",32,C.JLM]].map(([n,v,c])=>`
  <div class="duel"><div class="row"><span>${n}</span><span>Marine Le Pen</span></div>
  <div class="split"><div style="width:${v}%;background:${c}">${v} %</div><div style="width:${100-v}%;background:${C.LP}">${100-v} %</div></div></div>`).join("");
+
+// Historique sondages vs résultats
+const H=[
+ {y:1981,inst:"Sofres (24 avr.)",c:[["Giscard d'Estaing",28.32,[27.5]],["Mitterrand",25.85,[21.5]],["Chirac",18.00,[18.5]],["Marchais",15.35,[19]],["Lalonde",3.88,[3.5]]],
+  t2:["Mitterrand",51.76,[52]]},
+ {y:1988,inst:"Sofres (20-21 avr.)",fn:"Le Pen",c:[["Mitterrand",34.10,[35]],["Chirac",19.94,[23.5]],["Barre",16.55,[16.5]],["Le Pen",14.39,[12]],["Lajoinie",6.76,[7]]],
+  t2:["Mitterrand",54.02,[54]]},
+ {y:1995,inst:"Sofres, Ipsos",fn:"Le Pen",c:[["Jospin",23.30,[20.5,20.5]],["Chirac",20.84,[24,26.5]],["Balladur",18.58,[16.5,16.5]],["Le Pen",15.00,[14,13]],["Hue",8.64,[9.5,9.5]]],
+  t2:["Chirac",52.64,[53]]},
+ {y:2002,inst:"6 instituts",fn:"Le Pen",c:[["Chirac",19.88,[19,19.5,20,19.5,20,20]],["Le Pen",16.86,[14,14,14,12.5,13,10.5]],["Jospin",16.18,[18,18,18,18,18,16.5]],["Bayrou",6.84,[6,6,6,6,7,6.5]],["Laguiller",5.72,[8,7,7,6.5,8,7]]],
+  t2:["Chirac",82.21,[80,79,78]]},
+ {y:2007,inst:"6 instituts",fn:"Le Pen",c:[["Sarkozy",31.18,[29,26.5,30,28,28,27]],["Royal",25.87,[26,25.5,23.5,22.5,22.5,23]],["Bayrou",18.57,[17,16,17,20,19,19]],["Le Pen",10.44,[12.5,16.5,13.5,13,12.5,14]],["Besancenot",4.08,[5,5,4.5,4,4,5]]],
+  t2:["Sarkozy",53.06,[55,55,53,53,54.5,54,52]]},
+ {y:2012,inst:"8 instituts",fn:"Le Pen",c:[["Hollande",28.63,[27,30,28,27.5,29,27,27,27.5]],["Sarkozy",27.18,[27,26.5,25,26.5,25.5,27,26.5,27.5]],["Le Pen",17.90,[16,14,16,16,16,17,15.5,16]],["Mélenchon",11.10,[13.5,14,14.5,12,14,13,15,13]],["Bayrou",9.13,[10.5,10,10.5,11,10,10,10,10]]],
+  t2:["Hollande",51.64,[52,52.5,53,52.5,53.5,53,52.5,53]]},
+ {y:2017,inst:"7 instituts",fn:"Le Pen",c:[["Macron",24.01,[24.5,23,24.5,24,24,24.5,23]],["Le Pen",21.30,[23,23,22.5,21.5,22,21,22]],["Fillon",20.01,[19,19,19.5,20,19,20,21]],["Mélenchon",19.58,[19,19.5,18.5,19.5,19,19,18]],["Hamon",6.36,[7.5,8,7,7,7.5,7.5,8]]],
+  t2:["Macron",66.10,[63,63,62,62,62,62,60,59]]},
+ {y:2022,inst:"11 instituts",fn:"Le Pen",c:[["Macron",27.85,[27,26,26,26.5,26,26,26,26,28,27.8,25]],["Le Pen",23.15,[24,25,21,23,22,24,23,23,24,21.3,23]],["Mélenchon",21.95,[18,17.5,18,16.5,17,17,17.5,16,16,18.6,16]],["Zemmour",7.07,[8.5,8.5,9.5,9,9,9,9.5,13,8,12,11]],["Pécresse",4.78,[8,8,9,8.5,9,9,8.5,6,7,5.3,8]]],
+  t2:["Macron",58.55,[56,55.5,55,57,57,55,55.5,56,53,53,55]]}];
+const avgOf=a=>a.reduce((s,v)=>s+v,0)/a.length;
+const sgn=v=>(v>0?"+":v<0?"−":"")+fmt(Math.abs(v));
+H.forEach(e=>{e.c=e.c.map(([n,r,p])=>({n,r,p:avgOf(p),e:r-avgOf(p)}));e.mae=avgOf(e.c.map(c=>Math.abs(c.e)));
+  e.big=e.c.reduce((a,b)=>Math.abs(b.e)>Math.abs(a.e)?b:a);
+  const top=arr=>arr.slice(0,2).map(c=>c.n);
+  const realTop=top([...e.c].sort((a,b)=>b.r-a.r)), pollTop=top([...e.c].sort((a,b)=>b.p-a.p));
+  e.ok=realTop[0]===pollTop[0]&&realTop[1]===pollTop[1]?"oui":(realTop.every(n=>pollTop.includes(n))?"ordre inversé":"non");
+  e.pollTop=pollTop;});
+document.getElementById("histSum").innerHTML=`<tr><th>Année</th><th>Sondages</th><th>Erreur moy.</th><th>Plus gros écart</th><th>Duo de tête</th></tr>`+
+ H.map(e=>`<tr><td class="lead">${e.y}</td><td>${e.inst}</td><td>${fmt(e.mae)} pt</td><td>${e.big.n} <span class="delta ${e.big.e>0?"up":"down"}">${sgn(e.big.e)}</span></td><td style="text-align:left"><span class="delta ${e.ok==="oui"?"up":"down"}">${e.ok==="oui"?"✓ juste":e.ok==="non"?"✗ "+e.pollTop.join("–")+" prévu":"⇄ ordre inversé"}</span></td></tr>`).join("");
+document.getElementById("t2").innerHTML=`<tr><th>Année</th><th>Vainqueur</th><th>Sondages</th><th>Résultat</th><th>Écart</th></tr>`+
+ H.map(e=>{const p=avgOf(e.t2[2]),d=e.t2[1]-p;return `<tr><td class="lead">${e.y}</td><td>${e.t2[0]}</td><td>${fmt(p)} %</td><td>${fmt(e.t2[1],2)} %</td><td><span class="delta ${Math.abs(d)<1?"":d>0?"up":"down"}">${sgn(d)}</span></td></tr>`}).join("");
+function drawDumb(y){
+  const e=H.find(h=>h.y===y), W=520, rowH=34, m={l:120,r:20,t:8,b:24}, H2=m.t+m.b+rowH*e.c.length;
+  const mx=Math.ceil(Math.max(...e.c.flatMap(c=>[c.r,c.p]))/10)*10, x=v=>m.l+v/mx*(W-m.l-m.r);
+  let g="";
+  for(let v=0;v<=mx;v+=10)g+=`<line x1="${x(v)}" x2="${x(v)}" y1="${m.t}" y2="${H2-m.b}" stroke="var(--line)"/><text x="${x(v)}" y="${H2-6}" text-anchor="middle">${v}</text>`;
+  e.c.forEach((c,i)=>{const cy=m.t+rowH*i+rowH/2, col=c.e>0?"#1c8a4a":"var(--accent)";
+    g+=`<text x="0" y="${cy+4}" style="fill:var(--ink);font:13px var(--body)">${c.n}</text>
+    <line x1="${x(c.p)}" x2="${x(c.r)}" y1="${cy}" y2="${cy}" stroke="${col}" stroke-width="3"/>
+    <circle cx="${x(c.p)}" cy="${cy}" r="5" fill="var(--muted)"/><circle cx="${x(c.r)}" cy="${cy}" r="6" fill="var(--ink)"/>
+    <text x="${x(Math.max(c.r,c.p))+10}" y="${cy+4}" style="fill:${col}">${sgn(c.e)}</text>`;});
+  document.getElementById("dumb").innerHTML=`<div style="overflow-x:auto"><svg viewBox="0 0 ${W+30} ${H2}" width="100%" role="img" aria-label="Sondages et résultats ${y}">${g}</svg></div>`;
+  document.getElementById("dumbSrc").textContent=`${y} · moyenne des derniers sondages : ${e.inst}. Erreur moyenne : ${fmt(e.mae)} point.`;
+  document.querySelectorAll("#yearBtns button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.y==y));
+}
+document.getElementById("yearBtns").innerHTML=H.map(e=>`<button type="button" data-y="${e.y}" class="yb">${e.y}</button>`).join("");
+document.getElementById("yearBtns").addEventListener("click",ev=>{const b=ev.target.closest("button");if(b)drawDumb(+b.dataset.y)});
+drawDumb(2022);
+(function(){
+  const D=H.filter(e=>e.fn).map(e=>({y:e.y,v:e.c.find(c=>c.n===e.fn).e}));
+  const W=520,Ht=220,m={l:34,r:10,t:14,b:26},mx=5,y0=m.t+(Ht-m.t-m.b)/2,sc=(Ht-m.t-m.b)/2/mx,bw=(W-m.l-m.r)/D.length;
+  let g="";[-4,-2,0,2,4].forEach(v=>g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y0-v*sc}" y2="${y0-v*sc}" stroke="var(--line)" ${v===0?'stroke-width="1.5"':''}/><text x="${m.l-6}" y="${y0-v*sc+4}" text-anchor="end">${v>0?"+":""}${v}</text>`);
+  D.forEach((d,i)=>{const cx=m.l+bw*i+bw/2,h=Math.abs(d.v)*sc;
+    g+=`<rect x="${cx-bw*.3}" y="${d.v>0?y0-h:y0}" width="${bw*.6}" height="${Math.max(h,1)}" fill="${d.v>0?C.LP:"var(--accent)"}" rx="2"/>
+    <text x="${cx}" y="${d.v>0?y0-h-5:y0+h+13}" text-anchor="middle" style="fill:var(--ink)">${sgn(d.v)}</text>
+    <text x="${cx}" y="${Ht-6}" text-anchor="middle">${d.y}</text>`});
+  document.getElementById("fnChart").innerHTML=`<div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${Ht}" width="100%" role="img" aria-label="Écart sondages-résultat pour le candidat FN/RN">${g}</svg></div>`;
+})();
 
 // Réseaux
 document.getElementById("followers").innerHTML=`<tr><th>Réseau</th><th></th><th>Le Pen</th><th>Mélenchon</th></tr>`+
